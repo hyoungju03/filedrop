@@ -4,9 +4,13 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <err.h>
+#include <errno.h>
+#include <string.h>
+
+#define LOCALHOST "127.0.0.1"
 
 
-int main()
+int main(int argc, char *argv[])
 {
     int sfd = socket(AF_INET, SOCK_STREAM, 0);
     
@@ -20,10 +24,14 @@ int main()
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = 8080;
-    inet_pton(AF_INET, "172.30.1.45", &(addr.sin_addr));
+    if ( inet_pton(AF_INET, LOCALHOST, &(addr.sin_addr)) == 0 )
+    {
+        printf("Invalid IP address.\n"); 
+    }
 
     if (bind(sfd, (struct sockaddr *) &addr, sizeof(addr)) == -1)
     {
+    fprintf(stderr, "Bind error: %s\n", strerror(errno));
 	printf("failed to bind.\n");
     }
 
