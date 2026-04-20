@@ -70,6 +70,11 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
+    size_t read_byte = 38;
+    char buf[read_byte];
+
+    size_t act_read = read(cfd, buf, read_byte); 
+    printf("Read string: %s\n", buf);
 
     return 0;
 }
