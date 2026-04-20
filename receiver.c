@@ -35,11 +35,8 @@ int main(int argc, char *argv[])
     sock_addr.sin6_family = AF_INET6;
     sock_addr.sin6_port = htons(8080);
     sock_addr.sin6_scope_id = if_nametoindex(if_name);
-
     // printf("sock_addr size: %zu (B)\n", sizeof(sock_addr));
 
-    //const char *ipv6_addr = "fe80::101b:6c28:18f4:48a6";
-    
     if (inet_pton(AF_INET6, ipv6_addr, &(sock_addr.sin6_addr)) == 1)
     {
         // printf("inet_pton success\n");
@@ -53,6 +50,26 @@ int main(int argc, char *argv[])
         perror("bind");
         exit(EXIT_FAILURE);
     }
+
+    if (listen(sfd, 1) == -1)
+    {
+        perror("listen");
+        exit(EXIT_FAILURE);
+    };
+
+    struct sockaddr_in6 peer_sock_addr;
+    peer_sock_addr.sin6_family = AF_INET6;
+    peer_sock_addr.sin6_port = htons(48724);
+    peer_sock_addr.sin6_scope_id = if_nametoindex(if_name);
+
+    socklen_t peer_addr_size = sizeof(peer_sock_addr);
+    int cfd = accept(sfd, (struct sockaddr *) &peer_sock_addr, &peer_addr_size);
+    if (cfd == -1)
+    {
+        perror("accept");
+        exit(EXIT_FAILURE);
+    }
+
 
     return 0;
 }
